@@ -1,0 +1,20 @@
+{
+  "name": "annopick-plugin",
+  "owner": {
+    "name": "Annopick"
+  },
+  "description": "Annopick's agent plugin for Zcode",
+  "plugins": [
+    {
+      "name": "annopick-plugin",
+      "source": "./",
+      "description": "Annopick's agent plugin for Zcode",
+      "category": "engineering",
+      "keywords": [
+            "skills",
+            "coding",
+            "zcode"
+        ]
+    }
+  ]
+}
