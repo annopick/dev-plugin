@@ -1,0 +1,25 @@
+{
+  "name": "annopick-plugin",
+  "display_name": "Annopick Plugin",
+  "description": "Annopick's agent plugin for Zcode",
+  "version": "1.0.0",
+  "author": {
+    "name": "Annopick"
+  },
+  "homepage": "https://github.com/annopick/dev-plugin",
+  "repository": "https://github.com/annopick/dev-plugin",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "coding",
+    "zcode"
+  ],
+  "skills": [
+    "./skills/weknora"
+  ],
+  "agents": [
+    "./agents/frontend-acceptance.md",
+    "./agents/frontend-developer.md"
+  ],
+  "mcpServers": "./.mcp.json"
+}
