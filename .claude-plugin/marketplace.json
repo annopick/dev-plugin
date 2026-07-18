@@ -8,6 +8,7 @@
     {
       "name": "annopick-plugin",
       "source": "./",
+      "version": "1.0.3",
       "description": "Annopick's agent plugin for Zcode",
       "category": "engineering",
       "keywords": [
