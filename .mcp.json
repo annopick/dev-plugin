@@ -8,7 +8,7 @@
                 "@z_ai/mcp-server"
             ],
             "env": {
-                "Z_AI_API_KEY": "${env:ZAI_MCP_TOKEN}",
+                "Z_AI_API_KEY": "${ZAI_MCP_TOKEN}",
                 "Z_AI_MODE": "ZHIPU"
             }
         },
@@ -16,21 +16,21 @@
             "type": "http",
             "url": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp",
             "headers": {
-                "Authorization": "Bearer ${env:ZAI_MCP_TOKEN}"
+                "Authorization": "Bearer ${ZAI_MCP_TOKEN}"
             }
         },
         "zai-web-page-reading-mcp": {
             "type": "http",
             "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp",
             "headers": {
-            "Authorization": "Bearer ${env:ZAI_MCP_TOKEN}"
+            "Authorization": "Bearer ${ZAI_MCP_TOKEN}"
             }
         },
         "zai-open-source-repository-mcp": {
             "type": "http",
             "url": "https://open.bigmodel.cn/api/mcp/zread/mcp",
             "headers": {
-            "Authorization": "Bearer ${env:ZAI_MCP_TOKEN}"
+            "Authorization": "Bearer ${ZAI_MCP_TOKEN}"
             }
         },
         "playwright": {
