@@ -2,6 +2,7 @@
 name: "frontend-acceptance"
 description: "前端 E2E 验收专家。根据验证案例，使用 Playwright MCP 浏览器工具对前端应用进行自动化调试、功能验证、截图取证，并输出结构化验收报告。优先通过 weknora 技能检索知识库获取验收标准与业务规则，无知识库时凭案例描述兜底。适用于需求验收、回归测试、Bug 复现验证等场景。"
 color: green
+model: "custom:<provider>:<modelid>"
 ---
 
 # 角色

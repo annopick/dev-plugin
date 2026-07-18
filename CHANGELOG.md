@@ -5,6 +5,29 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.0.3] - 2026-07-18
+
+新增插件安装后的配置注入脚本，并引入 agent 的 `model` 字段占位符，补齐"安装即需本地化配置"的链路。
+
+### 新增
+
+- **安装后配置脚本** (`scripts/`)：因 ZCode 当前不在 MCP 配置与 agent `model` 字段中展开环境变量/动态值，提供两个幂等脚本在安装后手动注入，支持自动探测最新已安装版本目录、写前备份、缺项报错退出。
+  - `scripts/inject-mcp-token.sh`：读取系统环境变量 `ZAI_MCP_TOKEN`，替换插件安装目录下 `<version>/.mcp.json` 中 4 处 `${ZAI_MCP_TOKEN}` 占位符（1 处 stdio env、3 处 http headers）。对 token 中的 sed 特殊字符（`\`、`&`、`/`）做转义；占位符已不存在时视为成功跳过。
+  - `scripts/inject-agent-model.sh`：将插件安装目录下两个前端 agent 文件 frontmatter 的 `model:` 字段写入 `custom:<provider>:<model-id>` 格式的真实值。默认 Kimi K3（`provider=623553b2-da8a-4b43-9320-90b1ed62a12b`、`model=k3`），支持 `--provider`/`--model`/`--version` 覆盖。写前从 `~/.zcode/v2/config.json` 校验 provider/model 真实存在；provider key 中的 `:` 自动 URL 编码为 `%3A`（与现网 `kimi-k3.md` 格式一致）；缺 `model:` 行时在 frontmatter 结束 `---` 前自动插入，有则原地替换。
+- **agent `model` 字段占位符** (`agents/frontend-developer.md`、`agents/frontend-acceptance.md`)：两个 agent frontmatter 新增 `model: "custom:<provider>:<modelid>"` 占位符行。**该值为字面占位符，安装后需运行 `inject-agent-model.sh` 注入真实值后 agent 才能按指定模型运行**；不注入则 agent 的 model 配置无效。
+
+### 使用说明（安装后必做）
+
+```bash
+export ZAI_MCP_TOKEN=<你的智谱 API Key>
+bash scripts/inject-mcp-token.sh
+bash scripts/inject-agent-model.sh   # 默认 Kimi K3；可加 --provider/--model 改用其他模型
+```
+
+### 变更
+
+- **插件版本号**：`.claude-plugin/plugin.json` 的 `version` 由 `1.0.2` 升至 `1.0.3`，与本 CHANGELOG 对齐。
+
 ## [1.0.2] - 2026-07-18
 
 前端智能体接入 WeKnora 知识库检索能力，并修正 v1.0.1 遗留的环境变量注入语法。
@@ -64,6 +87,7 @@
 - `hooks/hooks.json` 当前为空文件，未注册任何 hook；如后续需要会话/工具事件钩子，需补充 `hooks` 配置并确保 `hooks.enabled: true`。
 - 插件配置已写入文件，但需在 ZCode 客户端 **Settings → Plugin Management** 重新启用/重载本插件后，智能体与技能才会被加载（分别在 **Settings → Subagents** 与 **`/` 菜单** 出现）。
 
+[1.0.3]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.3
 [1.0.2]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.2
 [1.0.1]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.1
 [1.0.0]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.0
