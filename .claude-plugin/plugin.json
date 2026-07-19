@@ -2,7 +2,7 @@
   "name": "annopick-plugin",
   "display_name": "Annopick Plugin",
   "description": "Annopick's agent plugin for Zcode",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": {
     "name": "Annopick"
   },

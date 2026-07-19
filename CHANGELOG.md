@@ -5,6 +5,18 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.0.5] - 2026-07-19
+
+修复 marketplace 清单版本号与插件清单不同步的问题，无功能变更。
+
+### 修复
+
+- **marketplace 清单版本号对齐** (`.claude-plugin/marketplace.json`)：该文件的 `plugins[].version` 自 v1.0.3 起滞后于 `.claude-plugin/plugin.json` 的 `version`（marketplace 停留在 1.0.3，plugin 已到 1.0.4），导致 marketplace 展示的版本与实际插件版本不一致。本次将两者统一升至 1.0.5，并在此后每次发版同步更新。
+
+### 变更
+
+- **插件版本号**：`.claude-plugin/plugin.json` 与 `.claude-plugin/marketplace.json` 的 `version` 均升至 `1.0.5`，与本 CHANGELOG 对齐。
+
 ## [1.0.4] - 2026-07-19
 
 新增 Windows（PowerShell）版安装后配置脚本，与既有 bash 脚本逻辑等价，并补充统一的使用说明文档。
@@ -106,6 +118,7 @@ bash scripts/inject-agent-model.sh   # 默认 Kimi K3；可加 --provider/--mode
 - `hooks/hooks.json` 当前为空文件，未注册任何 hook；如后续需要会话/工具事件钩子，需补充 `hooks` 配置并确保 `hooks.enabled: true`。
 - 插件配置已写入文件，但需在 ZCode 客户端 **Settings → Plugin Management** 重新启用/重载本插件后，智能体与技能才会被加载（分别在 **Settings → Subagents** 与 **`/` 菜单** 出现）。
 
+[1.0.5]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.5
 [1.0.4]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.4
 [1.0.3]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.3
 [1.0.2]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.2
