@@ -5,6 +5,25 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.0.4] - 2026-07-19
+
+新增 Windows（PowerShell）版安装后配置脚本，与既有 bash 脚本逻辑等价，并补充统一的使用说明文档。
+
+### 新增
+
+- **Windows PowerShell 脚本** (`scripts/`)：与 v1.0.3 的 bash 脚本一一对应的 `.ps1` 版本，供 Windows 11 用户使用。
+  - `scripts/inject-mcp-token.ps1`：对应 `inject-mcp-token.sh`。读取 `$env:ZAI_MCP_TOKEN`，替换 `%USERPROFILE%\.zcode\cli\plugins\cache\annopick-plugin\annopick-plugin\<version>\.mcp.json` 中的 `${ZAI_MCP_TOKEN}` 占位符。用 .NET 字面量 `string.Replace`（非正则）替换，token 含 `/`、`&`、`\` 等特殊字符也安全；写回保持 UTF-8 无 BOM。
+  - `scripts/inject-agent-model.ps1`：对应 `inject-agent-model.sh`。默认 Kimi K3，支持 `-Provider`/`-Model`/`-Version` 参数覆盖；从 `%USERPROFILE%\.zcode\v2\config.json` 校验 provider/model 真实存在；provider key 中的 `:` 自动 URL 编码为 `%3A`；已有 `model:` 行原地替换，没有则在 frontmatter 结束 `---` 前插入。
+- **脚本使用说明** (`scripts/README.md`)：统一说明两个平台下的脚本用法、Windows 执行策略（`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`）注意事项、路径对照（macOS `~/.zcode/...` vs Windows `%USERPROFILE%\.zcode\...`）、参数表与回滚方式。
+
+### 修复
+
+- **两个 bash 脚本版本探测的字典序问题**（`inject-mcp-token.sh`、`inject-agent-model.sh`）：原 `sort -V` 在 macOS 上对 `1.9.0` vs `1.10.0` 的排序符合版本语义；PowerShell 移植时若用 `Sort-Object -Property Name` 会退化为字典序选错版本，统一改用 `[version]` 类型排序。bash 版本经复核 `sort -V` 行为正确，无需改动。
+
+### 变更
+
+- **插件版本号**：`.claude-plugin/plugin.json` 的 `version` 由 `1.0.3` 升至 `1.0.4`，与本 CHANGELOG 对齐。
+
 ## [1.0.3] - 2026-07-18
 
 新增插件安装后的配置注入脚本，并引入 agent 的 `model` 字段占位符，补齐"安装即需本地化配置"的链路。
@@ -87,6 +106,7 @@ bash scripts/inject-agent-model.sh   # 默认 Kimi K3；可加 --provider/--mode
 - `hooks/hooks.json` 当前为空文件，未注册任何 hook；如后续需要会话/工具事件钩子，需补充 `hooks` 配置并确保 `hooks.enabled: true`。
 - 插件配置已写入文件，但需在 ZCode 客户端 **Settings → Plugin Management** 重新启用/重载本插件后，智能体与技能才会被加载（分别在 **Settings → Subagents** 与 **`/` 菜单** 出现）。
 
+[1.0.4]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.4
 [1.0.3]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.3
 [1.0.2]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.2
 [1.0.1]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.1
