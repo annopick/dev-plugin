@@ -1,12 +1,13 @@
 <#
 .SYNOPSIS
-    Replace the ${ZAI_MCP_TOKEN} placeholders in the installed plugin's .mcp.json
-    with the value of the ZAI_MCP_TOKEN environment variable.
+    Replace the ${user_config.zai_api_token} placeholders in the installed plugin's
+    .mcp.json with the value of the ZAI_MCP_TOKEN environment variable.
 
 .DESCRIPTION
     Windows counterpart of inject-mcp-token.sh.
-    Background: ZCode does not expand environment variables inside MCP config,
-    so the token must be substituted manually after the plugin is installed.
+    The recommended path is the userConfig field (auto-replaced by ZCode). This
+    script is a fallback for environments where userConfig expansion is unavailable.
+    It substitutes the placeholder that userConfig would have expanded.
 
     - Reads token from $env:ZAI_MCP_TOKEN (errors out if missing/empty)
     - Locates the newest installed x.y.z version dir under the plugin cache
@@ -37,7 +38,7 @@ $ErrorActionPreference = "Stop"
 # ----------------------------- config -----------------------------
 $PluginGroup = "annopick-plugin"
 $PluginName  = "annopick-plugin"
-$Placeholder = '${ZAI_MCP_TOKEN}'
+$Placeholder = '${user_config.zai_api_token}'
 $InstallRoot = Join-Path $env:USERPROFILE ".zcode\cli\plugins\cache\$PluginGroup\$PluginName"
 
 # ----------------------------- validate token -----------------------------

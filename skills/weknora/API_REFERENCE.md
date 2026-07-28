@@ -1,6 +1,8 @@
 # WeKnora API 参考
 
-WeKnora REST API 的完整端点目录、请求/响应 schema 与枚举值。当 SKILL.md 的决策表覆盖不了请求、或需要精确字段名/类型时加载本文件。
+WeKnora REST API 的完整端点目录、请求/响应 schema 与枚举值。
+
+> **接口选择**：大部分操作（知识库 CRUD、文件/URL 导入、混合检索、会话、RAG/Agent 问答、wiki 查询）应优先用官方 **MCP 服务器** `weknora-mcp-server`（本插件配置为 `weknora` MCP 服务器，工具前缀 `mcp__weknora__*`）——它封装了 REST + SSE 流，问答返回已拼装好的 `{ answer, references }`。**本文件是 REST 兜底与补充参考**：用于 MCP 未覆盖的能力（写/编辑 Markdown、reparse/cancel-parse、跨库 `knowledge-search`、stop/continue-stream、KB 拷贝/迁移、创建/复制 agent 等），以及需要精确字段名/类型时。MCP 工具与意图的对照见 [SKILL.md](SKILL.md)。
 
 - **基础 URL**：`$WEKNORA_BASE_URL`（以 `/api/v1` 结尾）
 - **鉴权**：每个请求带 `X-API-Key: $WEKNORA_API_KEY`

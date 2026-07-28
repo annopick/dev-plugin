@@ -5,6 +5,50 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.1.0] - 2026-07-28
+
+集成官方 WeKnora MCP 服务器（PyPI 包 `weknora-mcp`），作为 weknora 技能的主接口；凭据通过 userConfig 自动注入。这是相对 1.0.6 的功能新增，按 SemVer 升 minor。
+
+### 新增
+
+- **WeKnora MCP 服务器** (`.mcp.json`)：新增 `weknora` stdio 服务器，以 `uvx --from weknora-mcp==1.0.1 weknora-mcp-server` 启动（PyPI 包 [weknora-mcp](https://pypi.org/project/weknora-mcp/)，源码 [Tencent/WeKnora/mcp-server](https://github.com/Tencent/WeKnora/tree/main/mcp-server)）。它把 WeKnora REST + SSE 流封装成 28 个结构化工具（知识库 CRUD、文件/URL 导入、`hybrid_search`、会话、`chat`/`agent_chat`、`list/get_agent`、`list_models`、chunk 管理、wiki 查询等）；**问答的 SSE 流已在服务端消费并拼装**，工具直接返回 `{ answer, references, ... }`，无需自行解析流。已对真实实例（`http://192.168.50.26/api/v1`）实测：initialize 握手、tools/list（28 项）、list_knowledge_bases、hybrid_search 全部通过。
+- **WeKnora 凭据 userConfig** (`.zcode-plugin/plugin.json`、`.claude-plugin/plugin.json`)：清单新增 `weknora_base_url`、`weknora_api_key` 两个字段（`type:string`、`required:true`，**未标 sensitive** 以便在 UI 填入并被自动替换）。ZCode 加载插件时自动把二者替换进 `.mcp.json` 的 `env.WEKNORA_BASE_URL` / `env.WEKNORA_API_KEY`。安装后在 **Plugin Management → Advanced** 填入即可。
+
+### 变更
+
+- **weknora 技能重写为 MCP 服务器主接口** (`skills/weknora/SKILL.md`)：意图决策表从「REST endpoint」改为「MCP 工具 → 意图」映射；明确 MCP 服务器替你做的事（SSE 流已拼装、名称即 ID、文件上传走服务端本机路径）；REST 降级为兜底，仅覆盖 MCP 未暴露的能力（写/编辑 Markdown、reparse/cancel-parse、跨库 `knowledge-search`、stop/continue-stream、KB 拷贝/迁移、创建/复制 agent），保留 curl 模板。工作流示例全部改为 MCP 工具调用风格。
+- **API 参考定位调整** (`skills/weknora/API_REFERENCE.md`)：开头说明 MCP 服务器为主接口、本文件为 REST 兜底与字段级 schema 参考。
+- **插件版本号**：`.zcode-plugin/plugin.json`、`.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json` 的 `version` 统一升至 `1.1.0`。
+
+### 已知限制
+
+- `weknora_api_key` 未标记 `sensitive`（与 `zai_api_token` 同理：ZCode 当前对 sensitive 的 userConfig 值无法在 UI 填入且不持久化，故为保证可用性以明文存于配置）。`X-API-Key` 等同账户密码，请妥善保管。
+- weknora MCP 服务器要求运行环境有 `uv`/`uvx`（用于拉起 PyPI 包）。
+
+## [1.0.6] - 2026-07-23
+
+引入 userConfig 自动注入 ZAI MCP Token，脚本转为斜杠指令（command），并对齐 ZCode 推荐清单范式、补齐文档。
+
+### 新增
+
+- **userConfig 自动注入 MCP Token** (`.zcode-plugin/plugin.json`、`.claude-plugin/plugin.json`)：清单新增 `userConfig.zai_api_token` 字段（`type:string`、`required:true`，**未标 sensitive** 以保证可在 UI 填入并被自动替换）。`.mcp.json` 中 4 处占位符由 `${ZAI_MCP_TOKEN}` 改为 `${user_config.zai_api_token}`，ZCode 加载插件时自动把用户配置的真实 token 替换进 4 个 zai MCP 服务器的 `env`/`headers`。安装后在 **Plugin Management → Advanced** 填入 `zai_api_token` 即可，无需再手动跑脚本。
+- **斜杠指令** (`commands/`)：把两个安装后配置脚本封装为插件 command（薄封装，正文指示 agent 调用 `${ZCODE_PLUGIN_ROOT}/scripts/*.sh`）。
+  - `commands/inject-mcp-token.md`（`/inject-mcp-token`）：MCP token 兜底注入，当 userConfig 不可用时使用。
+  - `commands/inject-agent-model.md`（`/inject-agent-model`）：为前端 agent 注入 `model:` 字段（默认 Kimi K3，支持 `--provider`/`--model`/`--version` 参数）。
+- **插件说明文档** (`README.md`)：根目录新增完整的 README，含目录结构、组件清单、MCP 服务器表、快速上手（安装→配 token→注入 model）、指令说明。
+
+### 变更
+
+- **清单范式对齐** (`.zcode-plugin/`)：按 ZCode 推荐范式，新建 `.zcode-plugin/plugin.json` 作为清单主位置（探测优先级最高），`.claude-plugin/plugin.json` 降为兼容镜像保持内容一致。清单不再显式声明 `skills`/`agents`/`mcpServers` 字段，改由标准路径自动发现，避免重复加载诊断。补充 `description_i18n.en` 英文兜底。
+- **脚本占位符同步** (`scripts/inject-mcp-token.sh`、`.ps1`)：占位符常量由 `${ZAI_MCP_TOKEN}` 同步为 `${user_config.zai_api_token}`，与 `.mcp.json` 一致；并修复 macOS BSD sed 对 `${}` 转义报 `invalid repetition count` 的问题——替换实现由 sed 改为 bash 参数展开（`${line//find/replace}`），纯字面量替换、无需转义、对 token 中的 `/ & \` 特殊字符安全。
+- **脚本文档** (`scripts/README.md`)：重写以反映 userConfig 为主路径、脚本/指令为兜底；补充斜杠指令与脚本的对照、平台差异、回滚方式。
+- **插件版本号**：`.zcode-plugin/plugin.json`、`.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json` 的 `version` 统一升至 `1.0.6`。
+
+### 已知限制
+
+- `zai_api_token` 未标记 `sensitive`。ZCode 当前对 sensitive 的 userConfig 值无法在 UI 填入且不持久化，故为保证可用性，token 以明文存于 `~/.zcode/cli/config.json`。待 ZCode 支持敏感值安全存储后可改为 sensitive。
+- 前端 agent 的 `model:` 字段仍需通过 `/inject-agent-model` 注入真实值（agent model 依赖本机 provider 配置，无法用 userConfig 统一声明）。
+
 ## [1.0.5] - 2026-07-19
 
 修复 marketplace 清单版本号与插件清单不同步的问题，无功能变更。
@@ -118,6 +162,8 @@ bash scripts/inject-agent-model.sh   # 默认 Kimi K3；可加 --provider/--mode
 - `hooks/hooks.json` 当前为空文件，未注册任何 hook；如后续需要会话/工具事件钩子，需补充 `hooks` 配置并确保 `hooks.enabled: true`。
 - 插件配置已写入文件，但需在 ZCode 客户端 **Settings → Plugin Management** 重新启用/重载本插件后，智能体与技能才会被加载（分别在 **Settings → Subagents** 与 **`/` 菜单** 出现）。
 
+[1.1.0]: https://github.com/annopick/dev-plugin/releases/tag/v1.1.0
+[1.0.6]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.6
 [1.0.5]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.5
 [1.0.4]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.4
 [1.0.3]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.3

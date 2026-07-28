@@ -8,7 +8,7 @@
                 "@z_ai/mcp-server"
             ],
             "env": {
-                "Z_AI_API_KEY": "${ZAI_MCP_TOKEN}",
+                "Z_AI_API_KEY": "${user_config.zai_api_token}",
                 "Z_AI_MODE": "ZHIPU"
             }
         },
@@ -16,29 +16,42 @@
             "type": "http",
             "url": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp",
             "headers": {
-                "Authorization": "Bearer ${ZAI_MCP_TOKEN}"
+                "Authorization": "Bearer ${user_config.zai_api_token}"
             }
         },
         "zai-web-page-reading-mcp": {
             "type": "http",
             "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp",
             "headers": {
-            "Authorization": "Bearer ${ZAI_MCP_TOKEN}"
+                "Authorization": "Bearer ${user_config.zai_api_token}"
             }
         },
         "zai-open-source-repository-mcp": {
             "type": "http",
             "url": "https://open.bigmodel.cn/api/mcp/zread/mcp",
             "headers": {
-            "Authorization": "Bearer ${ZAI_MCP_TOKEN}"
+                "Authorization": "Bearer ${user_config.zai_api_token}"
             }
         },
         "playwright": {
             "type": "stdio",
             "command": "npx",
             "args": [
-            "@playwright/mcp@latest"
+                "@playwright/mcp@latest"
             ]
+        },
+        "weknora": {
+            "type": "stdio",
+            "command": "uvx",
+            "args": [
+                "--from",
+                "weknora-mcp==1.0.1",
+                "weknora-mcp-server"
+            ],
+            "env": {
+                "WEKNORA_BASE_URL": "${user_config.weknora_base_url}",
+                "WEKNORA_API_KEY": "${user_config.weknora_api_key}"
+            }
         }
     }
 }

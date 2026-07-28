@@ -2,11 +2,13 @@
 #
 # inject-mcp-token.sh
 #
-# Replace the ${ZAI_MCP_TOKEN} placeholders in the installed plugin's .mcp.json
-# with the value of the ZAI_MCP_TOKEN environment variable.
+# Replace the ${user_config.zai_api_token} placeholders in the installed plugin's
+# .mcp.json with the value of the ZAI_MCP_TOKEN environment variable.
 #
-# Background: ZCode does not expand environment variables inside MCP config,
-# so the token must be substituted manually after the plugin is installed.
+# Background: the recommended path is the userConfig field (auto-replaced by
+# ZCode). This script is a fallback for environments where userConfig expansion
+# is unavailable. It substitutes the placeholder that userConfig would have
+# expanded.
 #
 # Usage:
 #   export ZAI_MCP_TOKEN=your_zhipu_api_key
@@ -26,7 +28,7 @@ set -euo pipefail
 # ----------------------------- config -----------------------------
 PLUGIN_NAME="annopick-plugin"
 PLUGIN_GROUP="annopick-plugin"
-PLACEHOLDER='${ZAI_MCP_TOKEN}'
+PLACEHOLDER='${user_config.zai_api_token}'
 INSTALL_ROOT="$HOME/.zcode/cli/plugins/cache/${PLUGIN_GROUP}/${PLUGIN_NAME}"
 
 # ----------------------------- color -----------------------------
@@ -90,23 +92,21 @@ if ! grep -qF -- "$PLACEHOLDER" "$MCP_FILE"; then
     exit 0
 fi
 
-# ----------------------------- escape token for sed replacement -----------------------------
-# Order matters: backslash first, then & (whole-match ref in replacement), then /
-# (matches the sed delimiter we use below).
-TOKEN_ESCAPED=$(printf '%s' "$ZAI_MCP_TOKEN" \
-    | sed -e 's/\\/\\\\/g' \
-          -e 's/&/\\&/g' \
-          -e 's|/|\\/|g')
-
 # ----------------------------- backup -----------------------------
 BACKUP="$MCP_FILE.bak"
 cp -f "$MCP_FILE" "$BACKUP"
 printf 'Backup:         %s\n' "$BACKUP"
 
 # ----------------------------- perform replacement -----------------------------
-# Literal placeholder chars $ { } must be escaped in the sed pattern (BRE).
+# Use bash parameter expansion (${var//find/replace}) which is pure literal
+# string replacement — no regex, no escaping. Robust to any char in the token
+# (/ & \ etc.). Newline style (LF/CRLF) and trailing newline are preserved
+# because we read raw lines and re-emit them verbatim.
 TMP_FILE="${MCP_FILE}.tmp"
-sed -e "s|\\\${ZAI_MCP_TOKEN}|${TOKEN_ESCAPED}|g" "$MCP_FILE" > "$TMP_FILE"
+: > "$TMP_FILE"
+while IFS= read -r line || [ -n "$line" ]; do
+    printf '%s\n' "${line//"$PLACEHOLDER"/"$ZAI_MCP_TOKEN"}" >> "$TMP_FILE"
+done < "$MCP_FILE"
 mv -f "$TMP_FILE" "$MCP_FILE"
 
 # ----------------------------- verify -----------------------------
