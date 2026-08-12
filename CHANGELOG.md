@@ -5,6 +5,28 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.2.0] - 2026-08-12
+
+新增 Ant Design（React + TypeScript + antd）技术栈智能体对，与原有 Vue 智能体并行共存。知识来源脱离 weknora，改用 `@ant-design/cli`（MCP/CLI 离线组件知识）与 ant-design-x 技能（AI 原生组件知识）。按 SemVer 升 minor。
+
+### 新增
+
+- **antd MCP 服务器** (`.mcp.json`)：新增 `antd` stdio 服务器，以 `npx -y @ant-design/cli mcp` 启动（npm 包 [@ant-design/cli](https://github.com/ant-design/ant-design-cli)）。完全离线，无需 API Key 或网络，提供 7 个工具：`antd_list`（组件列表）、`antd_info`（Props/API）、`antd_doc`（完整文档）、`antd_demo`（Demo 源码）、`antd_token`（设计令牌）、`antd_semantic`（语义化 className）、`antd_changelog`（版本变更/差异），覆盖 antd v4/v5/v6。
+- **antd 组件知识技能** (`skills/antd/SKILL.md`)：类比 weknora 技能的角色，教智能体在编码前通过 MCP 工具或 CLI 命令查询组件 API（不凭记忆猜测），含场景指南（编写组件/调试/迁移/分析用量）、核心规则（匹配项目版本、结构化输出优先、改后 lint）、降级策略（CLI/MCP 不可用时凭自身知识兜底）。
+- **antd-x AI 原生组件知识技能** (`skills/antd-x/SKILL.md`)：覆盖 `@ant-design/x` 全部组件（Bubble、Sender、Conversations、Prompts、ThoughtChain、Actions、Welcome、Attachments、Sources、Suggestion、Think、FileCard、CodeHighlighter、Mermaid、Folder、XProvider、Notification）+ SDK 数据流（useXChat、XRequest、XChatProvider、XMarkdown、XCard）。基于 RICH 交互范式分组，含开发规则防踩坑与详细技能路由（引用已安装的 `x-components` 等技能获取逐组件 API 详参）。
+- **antd 开发智能体** (`agents/antd-developer.md`)：React 18+ + TypeScript + Ant Design v5/v6 技术栈，完整镜像 `frontend-developer.md` 结构——任务派发协议、知识优先原则（antd/antd-x 技能替代 weknora）、三个工作流（编码开发/详细设计文档/单元测试文档）、React+TS+antd+x 编码规范（函数组件+Hooks、ConfigProvider 主题定制、Form.useForm 表单校验、XProvider/Bubble.List/Sender 等 AI 组件用法）。
+- **antd 验收智能体** (`agents/antd-acceptance.md`)：React + Ant Design 技术栈 E2E 验收专家，镜像 `frontend-acceptance.md` 结构——Playwright 浏览器验证流程、知识优先用 antd 技能替代 weknora、antd 组件验收要点（Select/Modal/DatePicker/Table/Form 的 DOM portal 渲染特征）。
+
+### 变更
+
+- **inject 脚本与指令扩展** (`scripts/inject-agent-model.sh`、`scripts/inject-agent-model.ps1`、`commands/inject-agent-model.md`)：`AGENT_FILES` / `$AgentFiles` 数组从 2 个扩展到 4 个（新增 `antd-developer.md`、`antd-acceptance.md`），注释与指令描述从"两个前端 agent"更新为"四个前端 agent（Vue 与 antd 两套技术栈）"。`/inject-agent-model` 命令一次注入全部四个 agent 的 `model:` 字段。
+- **插件版本号**：`.zcode-plugin/plugin.json`、`.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json` 的 `version` 统一升至 `1.2.0`。
+
+### 已知限制
+
+- antd MCP 服务器（`npx -y @ant-design/cli mcp`）要求运行环境可执行 npx 且能从 npm registry 拉取 `@ant-design/cli`；离线环境首次启动可能失败，降级为凭智能体自身 antd 知识兜底。
+- antd-x 技能的逐组件详细 API（如 `x-components`、`use-x-chat` 等）依赖 `x-agent-skills` 插件提供；未安装时 `antd-x` 技能仍提供组件选型与开发规则总览，但不包含逐 Prop 详参。
+
 ## [1.1.0] - 2026-07-28
 
 集成官方 WeKnora MCP 服务器（PyPI 包 `weknora-mcp`），作为 weknora 技能的主接口；凭据通过 userConfig 自动注入。这是相对 1.0.6 的功能新增，按 SemVer 升 minor。

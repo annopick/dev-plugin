@@ -2,8 +2,9 @@
 #
 # inject-agent-model.sh
 #
-# Set the `model:` field in the frontmatter of the two frontend agent files
-# (frontend-developer.md, frontend-acceptance.md) under the INSTALLED plugin dir.
+# Set the `model:` field in the frontmatter of the four frontend agent files
+# (frontend-developer.md, frontend-acceptance.md, antd-developer.md, antd-acceptance.md)
+# under the INSTALLED plugin dir.
 #
 # The model value has the form:  custom:<provider-key>:<model-id>
 #   - provider-key: read from ~/.zcode/v2/config.json; colons are URL-encoded
@@ -37,7 +38,7 @@ PLUGIN_NAME="annopick-plugin"
 INSTALL_ROOT="$HOME/.zcode/cli/plugins/cache/${PLUGIN_GROUP}/${PLUGIN_NAME}"
 CONFIG_FILE="$HOME/.zcode/v2/config.json"
 AGENTS_SUBDIR="agents"
-AGENT_FILES=("frontend-developer.md" "frontend-acceptance.md")
+AGENT_FILES=("frontend-developer.md" "frontend-acceptance.md" "antd-developer.md" "antd-acceptance.md")
 
 # defaults: Kimi K3
 DEFAULT_PROVIDER="623553b2-da8a-4b43-9320-90b1ed62a12b"

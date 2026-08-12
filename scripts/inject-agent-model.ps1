@@ -1,7 +1,8 @@
 <#
 .SYNOPSIS
-    Set the `model:` field in the frontmatter of the two frontend agent files
-    (frontend-developer.md, frontend-acceptance.md) under the INSTALLED plugin dir.
+    Set the `model:` field in the frontmatter of the four frontend agent files
+    (frontend-developer.md, frontend-acceptance.md, antd-developer.md, antd-acceptance.md)
+    under the INSTALLED plugin dir.
 
 .DESCRIPTION
     Windows counterpart of inject-agent-model.sh.
@@ -51,7 +52,7 @@ $PluginGroup = "annopick-plugin"
 $PluginName  = "annopick-plugin"
 $InstallRoot = Join-Path $env:USERPROFILE ".zcode\cli\plugins\cache\$PluginGroup\$PluginName"
 $ConfigFile  = Join-Path $env:USERPROFILE ".zcode\v2\config.json"
-$AgentFiles  = @("frontend-developer.md", "frontend-acceptance.md")
+$AgentFiles  = @("frontend-developer.md", "frontend-acceptance.md", "antd-developer.md", "antd-acceptance.md")
 
 # ----------------------------- sanity -----------------------------
 if ([string]::IsNullOrWhiteSpace($Provider) -or [string]::IsNullOrWhiteSpace($Model)) {

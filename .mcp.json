@@ -52,6 +52,15 @@
                 "WEKNORA_BASE_URL": "${user_config.weknora_base_url}",
                 "WEKNORA_API_KEY": "${user_config.weknora_api_key}"
             }
+        },
+        "antd": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@ant-design/cli",
+                "mcp"
+            ]
         }
     }
 }
