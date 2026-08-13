@@ -5,6 +5,28 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.4.0] - 2026-08-14
+
+整合 Ant Design X 官方技能（@ant-design/x-skill v2.9），用 6 个官方专项技能替换原整合版 antd-x 技能；同时为 marketplace 和插件清单配置 icon。按 SemVer 升 minor。
+
+### 新增
+
+- **官方 x-skill 技能整合**（6 个技能，27 文件）：从 [ant-design/x](https://github.com/ant-design/x/tree/main/packages/x-skill) 官方仓库（v2.9）直接集成，替换原 `skills/antd-x/` 整合版。每个技能含 `SKILL.md` + `reference/` 详细文档：
+  - `skills/x-components/`：@ant-design/x 全部 UI 组件（Bubble/Sender/Conversations/Prompts/ThoughtChain/Actions/Welcome/Attachments/Sources/Suggestion/Think/FileCard/CodeHighlighter/Mermaid/Folder/XProvider/Notification）+ reference/（COMPONENTS.md 组件指南、PATTERNS.md 页面组合模式、API.md 自动生成 Props 参考）。
+  - `skills/use-x-chat/`：useXChat Hook 对话状态管理——消息列表、多会话（useXConversations）、错误处理、流式更新 + reference/（CORE.md 核心功能、API.md 完整 API、EXAMPLES.md 实践示例）。
+  - `skills/x-request/`：XRequest 流式请求配置——SSE 解析、认证安全策略、重试机制、自定义流（transformStream）+ reference/（CORE.md、API.md、EXAMPLES_SERVICE_PROVIDER.md 各服务商配置示例）。
+  - `skills/x-chat-provider/`：自定义 Chat Provider 四步实现——AbstractChatProvider 三个转换方法、内置 Provider（OpenAI/DeepSeek/Default）、XRequest 高级配置 + reference/（EXAMPLES.md）。
+  - `skills/x-markdown/`：@ant-design/x-markdown Markdown 流式渲染——不完整语法恢复、自定义组件映射、插件、主题 + reference/（CORE.md、STREAMING.md 流式渲染、EXTENSIONS.md 组件/插件/主题、API.md）。
+  - `skills/x-card/`：@ant-design/x-card Agent 动态富交互 UI——A2UI v0.9 协议（createSurface/updateComponents/updateDataModel/deleteSurface）、XCard.Box/Card、Catalog 注册、数据绑定（JSON Pointer）、Action 处理、流式渐进渲染 + reference/（USAGE.md/COMMANDS.md/DATA_BINDING.md/ACTIONS.md/CATALOG.md/API.md/INTRODUCTION.md 共 7 文件）。
+- **插件 icon 配置**：`dev-plugin.png` 配置为 marketplace 和插件 icon，三处清单文件（`.zcode-plugin/plugin.json`、`.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json`）统一使用 GitHub raw 链接 `https://raw.githubusercontent.com/annopick/dev-plugin/main/dev-plugin.png`。
+
+### 变更
+
+- **antd-developer 智能体技能引用更新**：知识优先原则技能分层表从 `antd-x` 单行扩展为 6 行（x-components/use-x-chat/x-request/x-chat-provider/x-markdown/x-card）；「Ant Design X 使用规范」段落改为按技能逐项说明；工具使用规范技能列表同步更新。
+- **删除** `skills/antd-x/`（原整合版 SKILL.md，已被 6 个官方技能替代）。
+- **README.md 更新**：目录结构展示 6 个 x-skill 技能目录（含 reference/）；组件清单表替换 antd-x 行为 6 行官方技能。
+- **插件版本号**：三处清单 `version` 统一升至 `1.4.0`。
+
 ## [1.3.0] - 2026-08-14
 
 新增 Ant Design Pro（ProComponents）、Umi Max 4、AntV 可视化三大技能，大幅扩展 antd 智能体的全栈开发能力。同时集成 antvis-mcp-server-chart（26 个图表生成 MCP 工具）、强制 pnpm 包管理器、纳入版本发布斜杠指令。按 SemVer 升 minor。

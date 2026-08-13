@@ -9,7 +9,7 @@
     {
       "name": "annopick-plugin",
       "source": "./",
-      "version": "1.3.0",
+      "version": "1.4.0",
       "description": "Annopick's agent plugin for Zcode",
       "category": "engineering",
       "icon": "https://raw.githubusercontent.com/annopick/dev-plugin/main/dev-plugin.png",
