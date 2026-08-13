@@ -1,6 +1,7 @@
 {
   "name": "annopick-plugin",
   "display_name": "Annopick Plugin",
+  "icon": "https://raw.githubusercontent.com/annopick/dev-plugin/main/dev-plugin.png",
   "description": "Annopick's agent plugin for Zcode, bundling WeKnora knowledge-base skill, frontend dev/acceptance agents, ZAI MCP servers and config-injection commands.",
   "description_i18n": {
     "en": "Annopick's agent plugin for Zcode, bundling WeKnora knowledge-base skill, frontend dev/acceptance agents, ZAI MCP servers and config-injection commands.",

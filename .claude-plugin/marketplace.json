@@ -3,6 +3,7 @@
   "owner": {
     "name": "Annopick"
   },
+  "icon": "https://raw.githubusercontent.com/annopick/dev-plugin/main/dev-plugin.png",
   "description": "Annopick's agent plugin for Zcode",
   "plugins": [
     {
@@ -11,6 +12,7 @@
       "version": "1.3.0",
       "description": "Annopick's agent plugin for Zcode",
       "category": "engineering",
+      "icon": "https://raw.githubusercontent.com/annopick/dev-plugin/main/dev-plugin.png",
       "keywords": [
         "skills",
         "coding",
