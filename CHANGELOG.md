@@ -5,6 +5,20 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.2.1] - 2026-08-13
+
+修复 inject 脚本在用户自定义配置目录（`dataBaseDir`）下读取 `config.json` 的路径错误，并升级 weknora MCP 依赖。本次为缺陷修复与依赖更新，无新增功能，按 SemVer 升 patch。
+
+### 修复
+
+- **inject 脚本配置目录解析** (`scripts/inject-agent-model.sh`、`scripts/inject-agent-model.ps1`)：两个脚本原先直接写死读取 `~/.zcode/v2/config.json`。但 ZCode 支持自定义配置目录——用户修改了 `~/.zcode/v2/settings.json` 的 `dataBaseDir` 字段后，家目录下的 `.zcode` 目录不再更新，脚本会读到过期或不存在的 `config.json`，导致校验 provider/model 失败。现改为先读取 `~/.zcode/v2/settings.json` 中的 `dataBaseDir`，非空则拼接 `$dataBaseDir/.zcode/v2/config.json`，否则回退到 `~/.zcode/v2/config.json`。bash 版用 python3（脚本既有依赖）、PowerShell 版用原生 `ConvertFrom-Json` 读取。
+- **README MCP 服务表遗漏 weknora** (`README.md`)：weknora MCP 服务器自 v1.1.0 引入后一直未补进 README 的 MCP 服务表，且表格上方与目录结构注释写的"6 个 server"与实际的 7 个不符。补齐 `weknora` 行并更正计数为 7。
+
+### 变更
+
+- **weknora MCP 依赖升级** (`.mcp.json`)：`weknora-mcp` 由 `1.0.1` 升至 `1.1.0`。
+- **插件版本号**：`.zcode-plugin/plugin.json`、`.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json` 的 `version` 统一升至 `1.2.1`。
+
 ## [1.2.0] - 2026-08-12
 
 新增 Ant Design（React + TypeScript + antd）技术栈智能体对，与原有 Vue 智能体并行共存。知识来源脱离 weknora，改用 `@ant-design/cli`（MCP/CLI 离线组件知识）与 ant-design-x 技能（AI 原生组件知识）。按 SemVer 升 minor。
@@ -184,6 +198,8 @@ bash scripts/inject-agent-model.sh   # 默认 Kimi K3；可加 --provider/--mode
 - `hooks/hooks.json` 当前为空文件，未注册任何 hook；如后续需要会话/工具事件钩子，需补充 `hooks` 配置并确保 `hooks.enabled: true`。
 - 插件配置已写入文件，但需在 ZCode 客户端 **Settings → Plugin Management** 重新启用/重载本插件后，智能体与技能才会被加载（分别在 **Settings → Subagents** 与 **`/` 菜单** 出现）。
 
+[1.2.1]: https://github.com/annopick/dev-plugin/releases/tag/v1.2.1
+[1.2.0]: https://github.com/annopick/dev-plugin/releases/tag/v1.2.0
 [1.1.0]: https://github.com/annopick/dev-plugin/releases/tag/v1.1.0
 [1.0.6]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.6
 [1.0.5]: https://github.com/annopick/dev-plugin/releases/tag/v1.0.5

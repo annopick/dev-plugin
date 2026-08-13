@@ -45,7 +45,7 @@
             "command": "uvx",
             "args": [
                 "--from",
-                "weknora-mcp==1.0.1",
+                "weknora-mcp==1.1.0",
                 "weknora-mcp-server"
             ],
             "env": {

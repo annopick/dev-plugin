@@ -8,9 +8,11 @@
     Windows counterpart of inject-agent-model.sh.
 
     The model value has the form:  custom:<provider-key>:<model-id>
-      - provider-key: read from ~/.zcode/v2/config.json; colons are URL-encoded
-        to %3A because ':' is the field separator (e.g. builtin:bigmodel ->
-        builtin%3Abigmodel). A UUID key like the default kimi one needs no encoding.
+      - provider-key: read from config.json (path resolved via dataBaseDir in
+        ~/.zcode/v2/settings.json; falls back to ~/.zcode/v2/config.json);
+        colons are URL-encoded to %3A because ':' is the field separator
+        (e.g. builtin:bigmodel -> builtin%3Abigmodel). A UUID key like the
+        default kimi one needs no encoding.
       - model-id: a model key nested under the chosen provider in config.json.
 
     Defaults to the Kimi K3 model:
@@ -51,7 +53,6 @@ $ErrorActionPreference = "Stop"
 $PluginGroup = "annopick-plugin"
 $PluginName  = "annopick-plugin"
 $InstallRoot = Join-Path $env:USERPROFILE ".zcode\cli\plugins\cache\$PluginGroup\$PluginName"
-$ConfigFile  = Join-Path $env:USERPROFILE ".zcode\v2\config.json"
 $AgentFiles  = @("frontend-developer.md", "frontend-acceptance.md", "antd-developer.md", "antd-acceptance.md")
 
 # ----------------------------- sanity -----------------------------
@@ -59,6 +60,22 @@ if ([string]::IsNullOrWhiteSpace($Provider) -or [string]::IsNullOrWhiteSpace($Mo
     Write-Host "Error: -Provider and -Model must both be non-empty." -ForegroundColor Red
     exit 2
 }
+
+# ----------------------------- resolve config dir -----------------------------
+# ZCode supports a custom data base dir. Read dataBaseDir from
+# ~/.zcode/v2/settings.json; if set, config.json lives at
+# $DataBaseDir/.zcode/v2/config.json, otherwise at ~/.zcode/v2/config.json
+# (the home .zcode dir stops being updated once a custom dir is configured).
+$SettingsFile = Join-Path $env:USERPROFILE ".zcode\v2\settings.json"
+$DataBaseDir = ""
+if (Test-Path -LiteralPath $SettingsFile -PathType Leaf) {
+    try {
+        $settingsObj = Get-Content -LiteralPath $SettingsFile -Raw -Encoding UTF8 | ConvertFrom-Json
+        $DataBaseDir = $settingsObj.dataBaseDir
+    } catch { $DataBaseDir = "" }
+}
+if ([string]::IsNullOrWhiteSpace($DataBaseDir)) { $DataBaseDir = $env:USERPROFILE }
+$ConfigFile = Join-Path $DataBaseDir ".zcode\v2\config.json"
 
 # ----------------------------- validate against config.json -----------------------------
 if (-not (Test-Path -LiteralPath $ConfigFile -PathType Leaf)) {

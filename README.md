@@ -13,7 +13,7 @@ annopick-plugin/
 ├── .claude-plugin/
 │   ├── plugin.json              # 兼容镜像（内容与 .zcode-plugin 一致）
 │   └── marketplace.json         # 市场注册信息
-├── .mcp.json                    # MCP 服务声明（6 个 server）
+├── .mcp.json                    # MCP 服务声明（7 个 server）
 ├── commands/                    # 斜杠指令
 │   ├── inject-mcp-token.md
 │   └── inject-agent-model.md
@@ -52,7 +52,7 @@ annopick-plugin/
 | **Agent** | `agents/antd-acceptance.md` | 前端 E2E 验收智能体（React + Ant Design），基于 Playwright 做功能验证与截图取证 |
 | **Command** | `commands/inject-mcp-token.md` | 兜底：把 ZAI MCP token 注入 `.mcp.json` |
 | **Command** | `commands/inject-agent-model.md` | 为全部 4 个前端 agent 注入 `model:` 字段（默认 Kimi K3） |
-| **MCP** | `.mcp.json` | 6 个 MCP 服务器（见下表） |
+| **MCP** | `.mcp.json` | 7 个 MCP 服务器（见下表） |
 
 ## MCP 服务器
 
@@ -63,9 +63,10 @@ annopick-plugin/
 | `zai-web-page-reading-mcp` | http | 网页读取 | `Authorization: Bearer ${user_config.zai_api_token}` |
 | `zai-open-source-repository-mcp` | http | GitHub 仓库检索 | `Authorization: Bearer ${user_config.zai_api_token}` |
 | `playwright` | stdio | 浏览器自动化（供验收智能体用） | 无 |
+| `weknora` | stdio | WeKnora 知识库（文档导入、混合检索、RAG/Agent 问答） | `env.WEKNORA_API_KEY` = `${user_config.weknora_api_key}` |
 | `antd` | stdio | Ant Design 组件知识（离线 API/文档/Demo/Token，7 个工具） | 无 |
 
-4 个 `zai-*` 服务器的鉴权统一由插件清单声明的 **userConfig** 字段 `zai_api_token` 驱动，ZCode 加载插件时自动把 `.mcp.json` 里的 `${user_config.zai_api_token}` 替换为用户配置的真实值并注入 `env`/`headers`。`playwright` 与 `antd` 无需鉴权，开箱即用。
+4 个 `zai-*` 服务器的鉴权由 userConfig 字段 `zai_api_token` 驱动；`weknora` 服务器由 `weknora_base_url` 与 `weknora_api_key` 驱动。ZCode 加载插件时自动把 `.mcp.json` 里的 `${user_config.*}` 占位符替换为用户配置的真实值并注入 `env`/`headers`。`playwright` 与 `antd` 无需鉴权，开箱即用。
 
 ## 快速上手
 

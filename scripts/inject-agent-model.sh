@@ -7,9 +7,11 @@
 # under the INSTALLED plugin dir.
 #
 # The model value has the form:  custom:<provider-key>:<model-id>
-#   - provider-key: read from ~/.zcode/v2/config.json; colons are URL-encoded
-#     to %3A because ':' is the field separator (e.g. builtin:bigmodel ->
-#     builtin%3Abigmodel). A UUID key like the default kimi one needs no encoding.
+#   - provider-key: read from config.json (path resolved via dataBaseDir in
+#     ~/.zcode/v2/settings.json; falls back to ~/.zcode/v2/config.json);
+#     colons are URL-encoded to %3A because ':' is the field separator
+#     (e.g. builtin:bigmodel -> builtin%3Abigmodel). A UUID key like the
+#     default kimi one needs no encoding.
 #   - model-id: a model key nested under the chosen provider in config.json.
 #
 # Defaults to the Kimi K3 model:
@@ -36,7 +38,6 @@ set -euo pipefail
 PLUGIN_GROUP="annopick-plugin"
 PLUGIN_NAME="annopick-plugin"
 INSTALL_ROOT="$HOME/.zcode/cli/plugins/cache/${PLUGIN_GROUP}/${PLUGIN_NAME}"
-CONFIG_FILE="$HOME/.zcode/v2/config.json"
 AGENTS_SUBDIR="agents"
 AGENT_FILES=("frontend-developer.md" "frontend-acceptance.md" "antd-developer.md" "antd-acceptance.md")
 
@@ -79,6 +80,19 @@ if [ -z "$PROVIDER" ] || [ -z "$MODELID" ]; then
     err "Error: --provider and --model must both be non-empty."
     exit 2
 fi
+
+# ----------------------------- resolve config dir -----------------------------
+# ZCode supports a custom data base dir. Read dataBaseDir from
+# ~/.zcode/v2/settings.json; if set, config.json lives at
+# $DATA_BASE_DIR/.zcode/v2/config.json, otherwise at ~/.zcode/v2/config.json
+# (the home .zcode dir stops being updated once a custom dir is configured).
+SETTINGS_FILE="$HOME/.zcode/v2/settings.json"
+DATA_BASE_DIR=""
+if [ -f "$SETTINGS_FILE" ]; then
+    DATA_BASE_DIR=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("dataBaseDir") or "")' "$SETTINGS_FILE" 2>/dev/null || true)
+fi
+[ -z "$DATA_BASE_DIR" ] && DATA_BASE_DIR="$HOME"
+CONFIG_FILE="$DATA_BASE_DIR/.zcode/v2/config.json"
 
 # ----------------------------- validate against config.json -----------------------------
 if [ ! -f "$CONFIG_FILE" ]; then

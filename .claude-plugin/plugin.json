@@ -6,7 +6,7 @@
     "en": "Annopick's agent plugin for Zcode, bundling WeKnora knowledge-base skill, frontend dev/acceptance agents, ZAI MCP servers and config-injection commands.",
     "zh-CN": "Annopick 的 Zcode 智能体插件，集成 WeKnora 知识库技能、前端开发/验收智能体、ZAI MCP 服务器与配置注入指令。"
   },
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": {
     "name": "Annopick"
   },
