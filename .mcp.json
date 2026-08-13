@@ -61,6 +61,14 @@
                 "@ant-design/cli",
                 "mcp"
             ]
+        },
+        "antv-chart": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@antv/mcp-server-chart"
+            ]
         }
     }
 }

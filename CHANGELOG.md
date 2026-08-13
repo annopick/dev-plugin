@@ -5,6 +5,32 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.3.0] - 2026-08-14
+
+新增 Ant Design Pro（ProComponents）、Umi Max 4、AntV 可视化三大技能，大幅扩展 antd 智能体的全栈开发能力。同时集成 antvis-mcp-server-chart（26 个图表生成 MCP 工具）、强制 pnpm 包管理器、纳入版本发布斜杠指令。按 SemVer 升 minor。
+
+### 新增
+
+- **Umi 框架知识技能** (`skills/umi/SKILL.md`)：基于 `@umijs/max` v4 官方源码的内嵌知识技能。覆盖配置系统（`defineConfig` 完整配置项表）、路由系统（配置式/约定式/布局路由扩展）、数据流（`useModel`/`getInitialState`/`useRequest`/react-query）、请求运行时配置（`errorConfig`/拦截器）、文件约定表（`app.tsx`/`access.ts`/`pages`/`models`/`mock` 等）、构建命令与生成器、常见陷阱（插件须显式启用、`.umirc.ts` 与 `config/config.ts` 互斥等）、按需文档检索 URL 地图。采用三层知识检索架构（Layer 1 内嵌 API → Layer 2 WebFetch 文档 → Layer 3 项目代码勘察）。
+- **Ant Design Pro + ProComponents 知识技能** (`skills/antd-pro/SKILL.md`)：基于 `@ant-design/pro-components` v3 源码的完整 API 提取。覆盖项目结构、路由菜单生成、ProLayout 布局配置，以及 ProComponents 全组件 API 参考——ProTable（`request` 签名 + `ProColumns<T>` 20+ 字段表 + `valueType` 30+ 枚举 + `actionRef` 方法表 + 排序/过滤规则）、ProForm（props 表 + 20+ 子组件清单 + `transform`/`convertValue` + `formRef` 命令式 API）、ModalForm/DrawerForm/StepsForm/BetaSchemaForm、ProList（`columns`+`listSlot`）、ProCard（栅格/split/tabs）、ProDescriptions、StatisticCard、PageContainer。含 CRUD/仪表盘/字段联动开发模式、配置参考、约定响应格式 `{data,success,total}`、常见陷阱（版本漂移/request 返回格式/sorter 语义等）、文档 URL 地图与 GitHub 源码读取指引。
+- **AntV 可视化知识技能** (`skills/antv/SKILL.md`)：集成 antvis-mcp-server-chart（26 个 `generate_*` MCP 图表生成工具）+ G2/G6/X6/Ant Design Charts 代码级 API。覆盖图表选型指南（时序/对比/占比/分布/关系/层级）、26 个 MCP 工具数据格式速查、公共参数（theme/palette/texture）、G2 v5 Spec Mode 硬规则（禁用 v4 链式 API、`chart.options()` 仅调一次、transform 必须数组）、G6 v5 核心概念、X6 图编辑与 React 集成、Ant Design Charts React 组件、开发规则、文档 URL 地图。
+- **antv-chart MCP 服务器** (`.mcp.json`)：新增 `antv-chart` stdio 服务器，以 `npx -y @antv/mcp-server-chart` 启动（npm包 [@antv/mcp-server-chart](https://github.com/antvis/mcp-server-chart)）。无需鉴权（使用免费公共渲染服务），提供 26 个图表生成工具（area/bar/column/line/scatter/pie/radar/dual_axes/histogram/boxplot/funnel/waterfall/liquid/word_cloud/sankey/treemap/venn/network_graph/flow_diagram/mind_map/fishbone/organization_chart/spreadsheet 等），调用后返回图片 URL 可嵌入 Markdown。
+- **版本发布斜杠指令** (`commands/plugin-version-release.md`)：原为工作区本地指令（`.zcode/commands/`），现纳入 Git 仓库的 `commands/` 目录，随插件分发。执行版本升级→CHANGELOG/README 修订→commit→push+tag 全流程。
+- **pnpm 强制规则**：antd-developer 智能体新增硬规则——包管理器强制使用 pnpm，禁止 npm/yarn，禁止添加 taobao/npmmirror 镜像源。umi 与 antd-pro 技能均内嵌此规则。
+
+### 变更
+
+- **antd-developer 智能体扩展** (`agents/antd-developer.md`)：技术栈基线新增 Umi Max 4 / ProComponents v3 / AntV 可视化；知识优先原则重构为多技能分层表（antd→antd-pro→umi→antv→antd-x，各含降级策略）；新增「Umi Max 使用规范」「ProComponents 使用规范」「AntV 可视化使用规范」三段编码规范；接口对接区分独立项目 vs Umi/Pro 项目模式；工具规范新增 antv-chart MCP 工具与 WebFetch 按需检索；Bash 命令统一为 `pnpm` 前缀。
+- **antd-acceptance 智能体扩展** (`agents/antd-acceptance.md`)：描述与技术栈新增 Ant Design Pro；知识优先新增 antd-pro 技能引用；新增「ProComponents 验收要点」段落（ProTable 搜索表单/工具栏/操作列、ModalForm/DrawerForm、PageContainer、FooterToolbar、ProDescriptions 的 DOM 特征）与「AntV 可视化验收要点」段落（Canvas 渲染断言方法、图表加载等待、G6/X6 交互验证、响应式重绘）。
+- **MCP 服务器总数**：`.mcp.json` 从 7 个增至 8 个服务器（新增 `antv-chart`）。
+- **插件版本号**：`.zcode-plugin/plugin.json`、`.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json` 的 `version` 统一升至 `1.3.0`。
+
+### 已知限制
+
+- Pro 与 Umi 无现成 MCP 服务器或预置技能包，知识来源依赖技能内嵌 API（Layer 1）+ WebFetch 官方文档按需检索（Layer 2）+ GitHub 源码读取，无法做到 antd CLI 那样的毫秒级离线查询。
+- antv-chart MCP 服务器依赖公共渲染服务（`https://antv-studio.alipay.com/api/gpt-vis`），网络不可达时图表生成工具不可用；代码级集成（`@ant-design/charts`/G2/G6/X6）不受影响。
+- AntV 详细技能（如 `x-components` 级别的逐组件 API 详参）需安装 `@antv/chart-visualization-skills` 或对应插件。
+
 ## [1.2.1] - 2026-08-13
 
 修复 inject 脚本在用户自定义配置目录（`dataBaseDir`）下读取 `config.json` 的路径错误，并升级 weknora MCP 依赖。本次为缺陷修复与依赖更新，无新增功能，按 SemVer 升 patch。
