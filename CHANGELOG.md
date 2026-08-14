@@ -5,6 +5,31 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.5.0] - 2026-08-14
+
+针对 antd-developer 智能体在实际使用中暴露的两个严重问题进行修复：①越权自行实现项目中不存在版本的组件（如 v1 项目自行实现 v2 的 Think 组件）；②用户提及 X 组件名时未能触发 x-components 技能加载、无法识别组件归属的 SDK 包。新增组件与依赖版本安全红线、组件→技能→SDK 包速查表、编码前版本一致性强制校验等防护机制。按 SemVer 升 minor。
+
+### 新增
+
+- **组件与依赖版本安全红线** (`agents/antd-developer.md`)：新增独立章节，规定当目标组件/API 在项目当前安装的依赖版本中不存在、签名不同或已被废弃移除时，**绝对不得**自行编写自定义实现来"等价替代"。包含三部分：
+  - **编码前版本一致性校验**（强制 3 步）：读 `package.json` 确认版本 → 对照确认组件存在且签名匹配 → 不匹配则停止。
+  - **两种模式分别处理**：派遣模式必须反向报告 `partial`/`failed`（含 Think 场景示例模板）；直接交互模式必须用 `AskUserQuestion` 向用户提问。
+  - **5 条绝对禁止行为清单**：自行实现替代组件、擅自升降级依赖、静默降级不告知、混用不同大版本 API 等。
+- **组件→技能→SDK 包速查表** (`agents/antd-developer.md`)：知识优先原则章节新增完整映射表，列出全部 X 组件名（Think / ThoughtChain / Bubble / Sender / Conversations / Prompts / Welcome / Attachments / Suggestion / Actions / FileCard / Sources / CodeHighlighter / Mermaid / Folder / XProvider / Notification）→ `@ant-design/x` → `x-components` 技能的归属关系。强调"这些组件不属于 antd 主包"，遇到组件名时第一反应是加载 x-components 技能。
+- **x-components 版本兼容性章节** (`skills/x-components/SKILL.md`)：新增「🔢 Version Compatibility (Critical)」章节，含 v1/v2 组件可用性完整对照表，明确标注 `Think` 和 `Mermaid` 为 **v2+ only（v1 不存在）**，`Sources`/`FileCard`/`CodeHighlighter`/`Folder`/`Notification` 为较新版本引入。附版本红线联动提示。
+
+### 变更
+
+- **antd-developer 智能体多维度强化技能触发**：
+  - 技能分层表 `x-components` 行场景描述从 `Bubble/Sender…` 改为引导至速查表，解决触发词过窄问题。
+  - 「何时查询」新增触发规则——遇到 X 组件名立即加载 x-components 技能。
+  - 「Ant Design X 使用规范」新增 🚨 技能加载优先级标注，列出全部组件名作为强制触发条件。
+  - 「工具使用规范」Skill 工具说明补充关键触发规则与速查表链接。
+  - 「编码实现」步骤拆分为 4a（版本一致性校验，强制）+ 4b（编码实现）。
+  - 「异常与中断」新增版本不匹配为立即停止编码的阻塞条件。
+  - 「项目结构探查」版本确认范围从仅 antd 扩展至全部依赖（特别是 `@ant-design/x`）。
+  - 结果回传模板「依赖与风险」新增版本不匹配必填项。
+
 ## [1.4.0] - 2026-08-14
 
 整合 Ant Design X 官方技能（@ant-design/x-skill v2.9），用 6 个官方专项技能替换原整合版 antd-x 技能；同时为 marketplace 和插件清单配置 icon。按 SemVer 升 minor。
@@ -246,6 +271,9 @@ bash scripts/inject-agent-model.sh   # 默认 Kimi K3；可加 --provider/--mode
 - `hooks/hooks.json` 当前为空文件，未注册任何 hook；如后续需要会话/工具事件钩子，需补充 `hooks` 配置并确保 `hooks.enabled: true`。
 - 插件配置已写入文件，但需在 ZCode 客户端 **Settings → Plugin Management** 重新启用/重载本插件后，智能体与技能才会被加载（分别在 **Settings → Subagents** 与 **`/` 菜单** 出现）。
 
+[1.5.0]: https://github.com/annopick/dev-plugin/releases/tag/v1.5.0
+[1.4.0]: https://github.com/annopick/dev-plugin/releases/tag/v1.4.0
+[1.3.0]: https://github.com/annopick/dev-plugin/releases/tag/v1.3.0
 [1.2.1]: https://github.com/annopick/dev-plugin/releases/tag/v1.2.1
 [1.2.0]: https://github.com/annopick/dev-plugin/releases/tag/v1.2.0
 [1.1.0]: https://github.com/annopick/dev-plugin/releases/tag/v1.1.0

@@ -15,7 +15,8 @@ It covers component selection, API usage, composition patterns, and common anti-
 ## Table of Contents
 
 - [📦 Package Overview](#-package-overview)
-- [🗂️ Component Groups](#-component-groups)
+- [🔢 Version Compatibility (Critical)](#-version-compatibility-critical)
+- [🗂️ Component Groups](#️-component-groups)
 - [🚀 Quick Start Decision Guide](#-quick-start-decision-guide)
 - [🛠 Recommended Workflow](#-recommended-workflow)
 - [🚨 Development Rules](#-development-rules)
@@ -35,6 +36,34 @@ npm install @ant-design/x
 ```
 
 > `@ant-design/x` extends `antd`. If you use `ConfigProvider`, replace it with `XProvider`.
+
+# 🔢 Version Compatibility (Critical)
+
+**Before using any component, you MUST check the project's installed `@ant-design/x` version** (read `package.json` or `pnpm-lock.yaml`). Component availability differs significantly between major versions:
+
+| Component | v1.x | v2.x+ | Notes |
+|-----------|------|-------|-------|
+| `Bubble` / `Bubble.List` | ✅ | ✅ | Core component, available since v1 |
+| `Sender` | ✅ | ✅ | Core component |
+| `Conversations` | ✅ | ✅ | Core component |
+| `Welcome` | ✅ | ✅ | Core component |
+| `Prompts` | ✅ | ✅ | Core component |
+| `ThoughtChain` | ✅ | ✅ | Core component |
+| `Actions` | ✅ | ✅ | Core component |
+| `Attachments` | ✅ | ✅ | Core component |
+| `Suggestion` | ✅ | ✅ | Core component |
+| `XProvider` | ✅ | ✅ | Core component |
+| `Sources` | ⚠️ | ✅ | Introduced in later v1 / v2 |
+| `Think` | ❌ | ✅ | **v2+ only** — does NOT exist in v1 |
+| `FileCard` | ⚠️ | ✅ | Introduced in later versions |
+| `CodeHighlighter` | ⚠️ | ✅ | Introduced in later versions |
+| `Mermaid` | ❌ | ✅ | **v2+ only** — does NOT exist in v1 |
+| `Folder` | ⚠️ | ✅ | Introduced in later versions |
+| `Notification` | ⚠️ | ✅ | Introduced in later versions |
+
+> ⚠️ **If the project uses v1 and the requested component is marked ❌ (not available):** Do NOT implement a custom replacement. Report the version mismatch back to the caller (dispatch mode) or ask the user (direct mode). See the agent's [组件与依赖版本安全红线] for the full protocol.
+>
+> The table above is a quick reference. For the definitive list, always verify against the project's installed version by checking the actual `node_modules/@ant-design/x` exports or the official changelog.
 
 # 🗂️ Component Groups
 

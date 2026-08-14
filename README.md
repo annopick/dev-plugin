@@ -72,7 +72,7 @@ annopick-plugin/
 | **Skill** | `skills/umi` | Umi Max 4 框架知识——配置系统、路由、数据流、请求处理、文件约定 |
 | **Skill** | `skills/antv` | AntV 可视化知识——MCP 图表生成（26 工具）、G2/G6/X6/Ant Design Charts API |
 | **Skill** | `skills/antd-x` → 已替换 | 原 antd-x 整合版已替换为以下 6 个官方 x-skill 技能 ↓ |
-| **Skill** | `skills/x-components` | @ant-design/x UI 组件（Bubble/Sender/Conversations 等 17 组件）— 官方 x-skill v2.9 |
+| **Skill** | `skills/x-components` | @ant-design/x UI 组件（Bubble/Sender/Conversations 等 17 组件）+ v1/v2 版本兼容性对照表 — 官方 x-skill v2.9 |
 | **Skill** | `skills/use-x-chat` | useXChat Hook 对话状态管理（消息列表/多会话/错误处理）— 官方 x-skill |
 | **Skill** | `skills/x-request` | XRequest 流式请求配置（SSE/认证/重试）— 官方 x-skill |
 | **Skill** | `skills/x-chat-provider` | 自定义 Chat Provider 适配流式接口 — 官方 x-skill |
@@ -80,7 +80,7 @@ annopick-plugin/
 | **Skill** | `skills/x-card` | XCard Agent 动态富交互 UI（A2UI 协议）— 官方 x-skill |
 | **Agent** | `agents/frontend-developer.md` | 前端开发智能体（Vue3 + TS + Element Plus），承担编码/详细设计/单测文档 |
 | **Agent** | `agents/frontend-acceptance.md` | 前端 E2E 验收智能体（Vue3 + Element Plus），基于 Playwright 做功能验证与截图取证 |
-| **Agent** | `agents/antd-developer.md` | 前端开发智能体（React + TS + AntD + Pro + Umi + AntV），承担编码/详细设计/单测文档 |
+| **Agent** | `agents/antd-developer.md` | 前端开发智能体（React + TS + AntD + Pro + Umi + AntV），承担编码/详细设计/单测文档；内置组件版本安全红线（禁止越权自行实现不存在版本的组件）与组件→技能→SDK 包速查表 |
 | **Agent** | `agents/antd-acceptance.md` | 前端 E2E 验收智能体（React + AntD + Pro），基于 Playwright 做功能验证与截图取证 |
 | **Command** | `commands/inject-mcp-token.md` | 兜底：把 ZAI MCP token 注入 `.mcp.json` |
 | **Command** | `commands/inject-agent-model.md` | 为全部 4 个前端 agent 注入 `model:` 字段（默认 Kimi K3） |

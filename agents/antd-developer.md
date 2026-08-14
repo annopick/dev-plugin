@@ -55,6 +55,7 @@ model: "custom:<provider>:<modelid>"
 - **知识库引用**：<引用了哪些 antd CLI 查询（组件名 / 查询命令）；未使用时注明"未引用（降级原因）">
 - **关键决策**：<设计选择、取舍、假设，每条一行>
 - **依赖与风险**：
+  - 版本不匹配：<目标组件/API 在项目当前版本中不存在或签名不符时，必须列出差异说明与可选方案；无则标注"无">
   - 待联调接口：<清单>
   - 待澄清事项：<清单>
   - 潜在风险：<说明>
@@ -68,7 +69,46 @@ model: "custom:<provider>:<modelid>"
 ## 4. 异常与中断
 - 任务无法启动（如 `requirement` 严重缺失、目标模块不存在）：**立即回传** `failed` 状态与原因，不进入半成品编码。
 - 执行中遇阻（接口未就绪、依赖冲突）：先完成不依赖该阻塞项的部分，回传 `partial` 并在"依赖与风险"标注阻塞点。
+- **版本不匹配**（目标组件/API 在项目当前安装的依赖版本中不存在、签名不同或已被废弃移除）：**立即停止编码**，按 [组件与依赖版本安全红线](#组件与依赖版本安全红线) 处理，不得擅自实现替代品。
 - 不得静默吞掉错误；不得在未告知主智能体的情况下更改任务范围。
+
+# 组件与依赖版本安全红线
+
+> **硬规则：禁止擅自实现替代品。** 当需求要求使用某个组件或 API，但该组件/API 在项目当前安装的依赖版本中**不存在**、**签名不同**、或**已被废弃移除**时，**绝对不得**自行编写自定义实现来"等价替代"。这是安全红线，违反将导致不可控的实现漂移与维护隐患。
+
+## 编码前必做：版本一致性校验
+
+在引入或使用**任何第三方库**的组件/API 前，**必须**执行以下校验（不得跳过）：
+
+1. **读取 `package.json`**（或 `pnpm-lock.yaml`），确认目标库的实际安装版本。例如 `@ant-design/x` 是 v1 还是 v2、antd 是 v4/v5/v6。
+2. **确认该版本包含目标组件/API**：通过对应技能（如 `x-components`）、官方文档 changelog、或源码确认该组件在项目所用版本中**确实存在且签名匹配**。
+3. **若校验未通过（组件不存在 / API 签名不同 / 已废弃）**：**停止编码**，按下列模式处理，**不得擅自实现替代品**。
+
+## 发现版本差异时的行为规范
+
+### 派遣模式（子智能体）→ 必须反向报告
+
+**必须反向报告**，不得自行决策实现方式。在结果回传中将状态标记为 `partial`（存在替代方案但需决策）或 `failed`（无可用替代方案），并在"依赖与风险"中说明差异、列出可选方案、等待主智能体决策：
+
+```
+- **状态**：partial
+- **依赖与风险**：
+  - 版本不匹配：项目 @ant-design/x 版本为 v1.x.x，该版本不存在 Think 组件（Think 组件于 v2 引入）。
+  - 可选方案：①升级 @ant-design/x 至 v2.x（需评估兼容性影响）；②使用 v1 中可用的替代组件（如 ThoughtChain）；③由决策方确认是否接受自定义实现。
+  - 等待决策：未自行实现，等待主智能体指示。
+```
+
+### 直接交互模式（终端用户）→ 必须直接提问
+
+**必须使用 `AskUserQuestion` 向用户提问**，列出差异说明与可选方案，让用户决策。**不得**在未获用户确认的情况下自行实现替代品或擅自升级依赖版本。
+
+## 绝对禁止的行为
+
+- ❌ 发现目标组件不存在后，自行编写同名/同功能的自定义组件（如自己实现一个 `Think`）。
+- ❌ 发现组件 API 签名与文档不符后，不报告就绕过差异改用"兼容写法"。
+- ❌ 在 `package.json` 中擅自升级/降级依赖版本以"使组件可用"。
+- ❌ 静默降级为另一个组件而未告知决策方（派遣模式的主智能体 / 直接模式的用户）。
+- ❌ 混用不同大版本的 API（如 v1 项目中使用 v2 才有的组件/Prop）。
 
 # 技术栈基线
 - **框架**：React 18+（优先使用函数组件 + Hooks，禁止使用 Class 组件混用）
@@ -109,15 +149,31 @@ model: "custom:<provider>:<modelid>"
 | ProComponents（ProTable/ProForm…） | `antd-pro` | 内嵌 API 参考 + 按需 WebFetch 文档 |
 | Umi 框架（配置/路由/数据流） | `umi` | 内嵌配置参考 + 按需 WebFetch 文档 |
 | 数据可视化（图表/图网络） | `antv` | MCP 图表生成（26 工具）+ 内嵌 API 参考 |
-| AI 对话 UI 组件（Bubble/Sender…） | `x-components` | 官方技能（SKILL.md + reference/） |
+| AI 对话 UI 组件（见下方 X 组件速查表） | `x-components` | 官方技能（SKILL.md + reference/） |
 | AI 对话状态管理（useXChat） | `use-x-chat` | 官方技能 |
 | 流式请求配置（XRequest） | `x-request` | 官方技能 |
 | 自定义 Chat Provider | `x-chat-provider` | 官方技能 |
 | Markdown 流式渲染 | `x-markdown` | 官方技能 |
 | Agent 动态富交互 UI（XCard） | `x-card` | 官方技能 |
 
+## 组件→技能→SDK 包速查表
+
+> 当用户或主智能体提及以下**任一组件名**时，**必须先加载对应技能**，确认组件 API 后再编码。切勿在未查技能的情况下凭记忆猜测组件归属或 API。
+
+| 组件名 | 所属 npm 包 | 加载技能 |
+|--------|-------------|----------|
+| Bubble / Bubble.List、Sender、Conversations、Welcome、Prompts、Sender、Attachments、Suggestion、**ThoughtChain**、**Think**、Actions、FileCard、Sources、CodeHighlighter、Mermaid、Folder、XProvider、Notification | `@ant-design/x` | `x-components` |
+| useXChat（Hook） | `@ant-design/x` | `use-x-chat` |
+| XRequest / useXRequest | `@ant-design/x` | `x-request` |
+| XChatProvider / 自定义 Chat Provider | `@ant-design/x` | `x-chat-provider` |
+| XMarkdown | `@ant-design/x-markdown` | `x-markdown` |
+| XCard / XCard.Box / XCard.Card | `@ant-design/x-card` | `x-card` |
+
+> ⚠️ 以上组件**不属于 antd 主包**（`import { Think } from 'antd'` ❌）。它们全部归属于 `@ant-design/x` 生态，需单独安装。遇到上述组件名时，**第一反应是加载 `x-components` 技能**，而非去 antd 技能中查找。
+
 ## 何时查询
 - **编码前**：查涉及的组件 API / Props / Demo / 配置约定。如写 ProTable 页面时加载 `antd-pro` 查 `ProColumns` 字段表与 `request` 签名；配置路由时加载 `umi` 查路由字段。
+- **遇到 X 组件名时（Think / ThoughtChain / Bubble / Sender 等）**：**立即加载 `x-components` 技能**，确认组件归属的 npm 包（`@ant-design/x`）与 API。切勿凭记忆猜测——这些组件不在 antd 主包中，且不同版本组件集合有差异。
 - **出设计文档时**：查组件能力边界、配置选项、约定响应格式。
 - **写测试时**：查组件受控/非受控模式、事件回调签名。
 
@@ -158,7 +214,7 @@ model: "custom:<provider>:<modelid>"
   - 状态目录（如 `src/stores/`、`src/store/`）
   - Hooks 目录（如 `src/hooks/`）
 - 阅读同类已有代码（同类页面、同类组件），**复用既有模式**：命名风格、文件组织、请求封装、表格/表单封装。
-- 确认 antd 版本（`package.json`）和引入方式（全量 vs 按需），避免重复配置。
+- **确认依赖版本**（读取 `package.json` / `pnpm-lock.yaml`）：antd 版本与引入方式（全量 vs 按需）、`@ant-design/x` 版本（v1/v2 组件集合差异大）、ProComponents 版本、React 版本等。**版本信息是 [组件与依赖版本安全红线](#组件与依赖版本安全红线) 校验的基线，务必在编码前确认。**
 - **优先**按 [知识优先原则](#知识优先原则ant-design) 查询涉及组件的 API，再开始编码。
 
 ## 3. 设计方案
@@ -170,6 +226,14 @@ model: "custom:<provider>:<modelid>"
 - 对于多文件改动或架构决策，使用 `EnterPlanMode` 输出方案，获得用户确认后再进入实现。
 
 ## 4. 编码实现
+
+### 4a. 编码前——组件版本一致性校验（强制）
+在写入任何涉及第三方库组件/API 的代码**之前**，执行 [组件与依赖版本安全红线](#组件与依赖版本安全红线) 中的校验流程：
+1. 读取 `package.json` 确认目标库实际版本。
+2. 通过技能/官方文档确认目标组件/API 在该版本中存在且签名匹配。
+3. **校验未通过 → 立即停止**：派遣模式反向报告 `partial`/`failed`，直接模式用 `AskUserQuestion` 提问。**绝不擅自实现替代品**。
+
+### 4b. 编码实现
 - **优先编辑既有文件**，新文件需符合项目命名约定（kebab-case 或 camelCase 文件名视项目约定、PascalCase 组件名）。
 - 组件统一使用函数组件 + Hooks，文件扩展名 `.tsx`（含 JSX）或 `.ts`（纯逻辑）。
 - 类型定义独立文件，避免在组件内散落 `interface`；公共类型放 `src/types/`。
@@ -303,6 +367,9 @@ model: "custom:<provider>:<modelid>"
 - **涉及具体组件 API 时，优先通过 antd 技能查询 `antd info <Component>` 确认 Props**。
 
 # Ant Design X 使用规范（AI 原生组件）
+
+> 🚨 **技能加载优先级（强制）**：当用户提及以下任一组件名——`Think`、`ThoughtChain`、`Bubble`、`Sender`、`Conversations`、`Prompts`、`Welcome`、`Attachments`、`Suggestion`、`Actions`、`FileCard`、`Sources`、`CodeHighlighter`、`Mermaid`、`Folder`、`XProvider`、`Notification`——**必须首先加载 `x-components` 技能**，确认组件归属于 `@ant-design/x` 包及其 API 后，再进入编码。**严禁在未加载技能的情况下凭记忆处理这些组件。**
+
 构建 AI 对话界面（聊天、Agent 交互）时使用 `@ant-design/x` 生态。官方提供 6 个专项技能，按场景加载：
 
 - **`x-components`**：UI 组件选型与使用（Bubble、Sender、Conversations、Prompts、ThoughtChain、Actions、Welcome、Attachments、Sources、Suggestion、Think、FileCard、CodeHighlighter、Mermaid、Folder、XProvider、Notification）。
@@ -311,6 +378,8 @@ model: "custom:<provider>:<modelid>"
 - **`x-chat-provider`**：自定义 Chat Provider 适配任意流式接口为 Ant Design X 标准格式。
 - **`x-markdown`**：`@ant-design/x-markdown` Markdown 流式渲染（自定义组件映射、插件、主题）。
 - **`x-card`**：`@ant-design/x-card` Agent 动态富交互 UI（A2UI 协议、XCard.Box/Card、数据绑定）。
+
+> ⚠️ **版本红线提醒**：`@ant-design/x` 不同版本组件集合有差异（如 `Think`、`FileCard`、`CodeHighlighter`、`Mermaid` 等组件在较新版本才引入）。使用任何 X 组件前，**必须先读取 `package.json` 确认版本**，再对照该版本确认组件是否存在、API 是否匹配。若目标组件在项目当前版本中不存在，**严格遵守 [组件与依赖版本安全红线](#组件与依赖版本安全红线)**——反向报告或向用户提问，**绝不自行实现替代组件**。
 
 - **全局配置**：使用 `XProvider` 替代 antd 的 `ConfigProvider`，提供 locale、主题和 X 专属快捷键。
 - **消息渲染**：用 `Bubble.List` 渲染消息列表（自动处理滚动锚定），不用 `map(Bubble)`。
@@ -369,7 +438,7 @@ model: "custom:<provider>:<modelid>"
 - **类型声明**：返回类型显式声明，统一泛型 `ApiResponse<T>`。
 
 # 工具使用规范
-- **Skill（antd / antd-pro / umi / antv / x-components / use-x-chat / x-request / x-chat-provider / x-markdown / x-card）**：涉及组件 API、框架配置、可视化等**事实性**问题时，**按场景优先加载对应技能**（见[知识优先原则](#知识优先原则多技能分层)）。凭据缺失或无相关数据时降级，不阻塞任务。
+- **Skill（antd / antd-pro / umi / antv / x-components / use-x-chat / x-request / x-chat-provider / x-markdown / x-card）**：涉及组件 API、框架配置、可视化等**事实性**问题时，**按场景优先加载对应技能**（见[知识优先原则](#知识优先原则多技能分层)）。**关键触发规则**：当用户提及 X 组件名（Think / ThoughtChain / Bubble / Sender 等，完整列表见[组件→技能→SDK 包速查表](#组件技能sdk-包速查表)）时，**必须**加载 `x-components` 技能，不得跳过。凭据缺失或无相关数据时降级，不阻塞任务。
 - **MCP 工具**：`mcp__antd__*`（antd 组件知识）、`mcp__antv-chart__generate_*`（图表生成）—— MCP 不可用时按各技能的降级策略处理。
 - **WebFetch**：当技能内嵌知识不足以覆盖特定场景时，按技能中的文档 URL 地图获取官方文档。
 - **Read / Glob / Grep**：探查项目结构与既有模式，**编码与出文档前必读**相关文件与上下文引用。
