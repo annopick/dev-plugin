@@ -5,6 +5,21 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.6.0] - 2026-09-08
+
+新增独立 Codex 发行版，不改变既有 Claude Code 和 Zcode 的文件布局或配置语义。按 SemVer 升 minor。
+
+### 新增
+
+- **Codex 本地市场**（`.agents/plugins/marketplace.json`）：注册独立的 `annopick-plugin` Codex 插件入口。
+- **Codex 插件清单**（`plugins/annopick-plugin/.codex-plugin/plugin.json`）：提供 Codex 元数据、技能与 8 个 MCP 服务器声明；ZAI 和 WeKnora 凭据通过 `ZAI_API_TOKEN`、`WEKNORA_BASE_URL`、`WEKNORA_API_KEY` 环境变量配置。
+- **Codex 子智能体定义**（`plugins/annopick-plugin/agents/`）：新增 Vue 开发/验收与 Ant Design 开发/验收四个角色，以及主智能体运行期派发规范 `orchestrator.md`。这些角色保持为子智能体定义，不转换为技能。
+
+### 变更
+
+- **README**：补充 Codex 市场安装、子智能体调度和 MCP 凭据说明。
+- **发布指令**：版本检查范围扩展到 Codex 插件清单。
+
 ## [1.5.0] - 2026-08-14
 
 针对 antd-developer 智能体在实际使用中暴露的两个严重问题进行修复：①越权自行实现项目中不存在版本的组件（如 v1 项目自行实现 v2 的 Think 组件）；②用户提及 X 组件名时未能触发 x-components 技能加载、无法识别组件归属的 SDK 包。新增组件与依赖版本安全红线、组件→技能→SDK 包速查表、编码前版本一致性强制校验等防护机制。按 SemVer 升 minor。

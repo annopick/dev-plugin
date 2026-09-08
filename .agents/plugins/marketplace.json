@@ -1,0 +1,20 @@
+{
+  "name": "annopick",
+  "interface": {
+    "displayName": "Annopick"
+  },
+  "plugins": [
+    {
+      "name": "annopick-plugin",
+      "source": {
+        "source": "local",
+        "path": "./plugins/annopick-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Engineering"
+    }
+  ]
+}

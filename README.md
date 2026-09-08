@@ -143,3 +143,16 @@ Windows 用户直接运行 PowerShell 脚本，详见 [scripts/README.md](./scri
 ## 版本管理
 
 版本变更记录见 [CHANGELOG.md](./CHANGELOG.md)。发版时遵循：`.zcode-plugin/plugin.json`、`.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json` 三处 `version` 保持一致，CHANGELOG 同步更新，按 SemVer 打 tag。
+
+## Codex
+
+Codex 发行版位于 `plugins/annopick-plugin/`，与本仓库的 Claude Code/Zcode 根目录文件相互隔离。其本地市场清单为 `.agents/plugins/marketplace.json`。
+
+```powershell
+codex plugin marketplace add .\
+codex plugin add annopick-plugin@annopick
+```
+
+四个角色以 Codex 子智能体定义保存在 `plugins/annopick-plugin/agents/`；主智能体应先读取其中的 `orchestrator.md`，再按角色文件使用 Codex 子智能体派发机制运行。它们不是技能，也不会自动替代原有 Claude Code/Zcode agents。
+
+Codex 的 ZAI 与 WeKnora MCP 使用环境变量，而不使用原有 `userConfig`：`ZAI_API_TOKEN`、`WEKNORA_BASE_URL` 与 `WEKNORA_API_KEY`。

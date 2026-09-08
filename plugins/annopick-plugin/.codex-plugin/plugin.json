@@ -1,0 +1,72 @@
+{
+  "name": "annopick-plugin",
+  "version": "1.6.0",
+  "description": "Annopick frontend skills and Codex subagent profiles.",
+  "author": {
+    "name": "Annopick",
+    "url": "https://github.com/annopick"
+  },
+  "homepage": "https://github.com/annopick/dev-plugin",
+  "repository": "https://github.com/annopick/dev-plugin",
+  "license": "MIT",
+  "keywords": ["codex", "frontend", "antd", "vue", "weknora"],
+  "skills": "./skills/",
+  "mcpServers": {
+    "zai-visual-understanding": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@z_ai/mcp-server"],
+      "env": {"Z_AI_API_KEY": "${ZAI_API_TOKEN}", "Z_AI_MODE": "ZHIPU"}
+    },
+    "zai-web-search": {
+      "type": "http",
+      "url": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp",
+      "headers": {"Authorization": "Bearer ${ZAI_API_TOKEN}"}
+    },
+    "zai-web-page-reading-mcp": {
+      "type": "http",
+      "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp",
+      "headers": {"Authorization": "Bearer ${ZAI_API_TOKEN}"}
+    },
+    "zai-open-source-repository-mcp": {
+      "type": "http",
+      "url": "https://open.bigmodel.cn/api/mcp/zread/mcp",
+      "headers": {"Authorization": "Bearer ${ZAI_API_TOKEN}"}
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "weknora": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "weknora-mcp==1.1.0", "weknora-mcp-server"],
+      "env": {"WEKNORA_BASE_URL": "${WEKNORA_BASE_URL}", "WEKNORA_API_KEY": "${WEKNORA_API_KEY}"}
+    },
+    "antd": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@ant-design/cli", "mcp"]
+    },
+    "antv-chart": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@antv/mcp-server-chart"]
+    }
+  },
+  "interface": {
+    "displayName": "Annopick Plugin",
+    "shortDescription": "Frontend skills and subagent development profiles.",
+    "longDescription": "Ant Design, Vue, AntV, and WeKnora skills with Codex-native frontend development and acceptance subagent profiles.",
+    "developerName": "Annopick",
+    "category": "Engineering",
+    "capabilities": ["Skills", "Subagent profiles"],
+    "websiteURL": "https://github.com/annopick/dev-plugin",
+    "defaultPrompt": [
+      "Read the Annopick subagent orchestrator and delegate this frontend task.",
+      "Use Annopick frontend skills to implement and verify this change."
+    ],
+    "brandColor": "#1677FF"
+  }
+}
