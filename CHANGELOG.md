@@ -5,6 +5,21 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.7.0] - 2026-09-15
+
+新增阿里云云效（Yunxiao）CLI 技能，基于 `aliyun devops` 子命令全集（API 2026-05-25）编制并经带/不带技能对照测试验证。按 SemVer 升 minor。
+
+### 新增
+
+- **技能 `skills/aliyun-devops`**（同步至 `plugins/annopick-plugin/skills/`）：覆盖云效 8 大域全部 434 个子命令——Codeup 代码管理（114）、Flow 流水线（85）、Projex 项目协作（74）、AppStack 应用交付（93）、TestHub 测试管理（26）、Base 组织与成员（34）、Packages 制品仓库（6）、Insight 效能洞察（1）。
+- **SKILL.md 主入口**：域路由表、凭据与组织 ID 发现流程（含 `base-list-organizations` 404 时的 `base-get-user-by-token` 反查 `lastOrganization` 与空 `--organization-id` 探测两条实测 fallback）、通用调用约定（`--cli-dry-run` 预检 / `--pager` 合并分页 / `--cli-query` 字段过滤）、写操作与删除的安全确认约定、5 条跨域高频工作流。
+- **`reference/` 分域参考**（7 个文件）：每域含对象模型、高频命令参数详解与全量命令索引表；命令与描述由 `--help` 输出机器提取生成，零手误。
+- **测试验证**：3 个真实场景（提 MR 预检 / 流水线排障 / 需求搜索）× 带/不带技能对照，断言 12/12 全过，工具调用与耗时较基线均降约 60%。
+
+### 变更
+
+- **README**：简介、目录结构、组件清单三处登记新技能。
+
 ## [1.6.0] - 2026-09-08
 
 新增独立 Codex 发行版，不改变既有 Claude Code 和 Zcode 的文件布局或配置语义。按 SemVer 升 minor。
