@@ -2,7 +2,7 @@
 
 [CHANGELOG](./CHANGELOG.md) · [scripts/README](./scripts/README.md)
 
-Annopick 的 ZCode 插件，集成 WeKnora 知识库技能、Ant Design 全栈知识技能（antd 组件 / ProComponents / Umi Max / AntV 可视化 / AI 原生组件）、阿里云云效 CLI 技能、前端开发/验收智能体（Vue3 与 React 两套技术栈）、ZAI MCP 服务器与配置注入指令。面向前端工程化开发与端到端验收场景。
+Annopick 的 ZCode 插件，集成 WeKnora 知识库技能（知识库检索与 Wiki 提示词生成）、Ant Design 全栈知识技能（antd 组件 / ProComponents / Umi Max / AntV 可视化 / AI 原生组件）、阿里云云效 CLI 技能、前端开发/验收智能体（Vue3 与 React 两套技术栈）、ZAI MCP 服务器与配置注入指令。面向前端工程化开发与端到端验收场景。
 
 ## 目录结构
 
@@ -53,9 +53,12 @@ annopick-plugin/
 │   ├── x-card/                  # XCard Agent 富交互 UI（官方 x-skill）
 │   │   ├── SKILL.md
 │   │   └── reference/
-│   └── aliyun-devops/           # 阿里云云效 CLI 技能（434 命令全收录）
+│   ├── aliyun-devops/           # 阿里云云效 CLI 技能（434 命令全收录）
+│   │   ├── SKILL.md
+│   │   └── reference/
+│   └── weknora-wiki-prompts/    # WeKnora Wiki 提示词生成技能（提取重点 + 内容生成要求）
 │       ├── SKILL.md
-│       └── reference/
+│       └── references/
 ├── scripts/                     # 配置注入脚本（macOS/Linux + Windows）
 │   ├── inject-mcp-token.sh / .ps1
 │   └── inject-agent-model.sh / .ps1
@@ -82,6 +85,7 @@ annopick-plugin/
 | **Skill** | `skills/x-markdown` | XMarkdown 流式 Markdown 渲染（组件映射/插件/主题）— 官方 x-skill |
 | **Skill** | `skills/x-card` | XCard Agent 动态富交互 UI（A2UI 协议）— 官方 x-skill |
 | **Skill** | `skills/aliyun-devops` | 阿里云云效（Yunxiao）CLI 操作指南——`aliyun devops` 8 域 434 个子命令全收录（Codeup 代码 / Flow 流水线 / Projex 项目协作 / AppStack 应用交付 / TestHub 测试 / Packages 制品 / Base 组织 / Insight 洞察），含凭据与组织 ID 发现流程、dry-run 预检与写操作安全约定 |
+| **Skill** | `skills/weknora-wiki-prompts` | WeKnora 知识库 Wiki 提示词生成——产出「Wiki 提取重点」与「Wiki 内容生成要求」两段业务指令（各 ≤4000 字符），用于生成或校准知识库 Wiki，附真实语料成对样例校准文件（同步至 `plugins/annopick-plugin/skills/`） |
 | **Agent** | `agents/frontend-developer.md` | 前端开发智能体（Vue3 + TS + Element Plus），承担编码/详细设计/单测文档 |
 | **Agent** | `agents/frontend-acceptance.md` | 前端 E2E 验收智能体（Vue3 + Element Plus），基于 Playwright 做功能验证与截图取证 |
 | **Agent** | `agents/antd-developer.md` | 前端开发智能体（React + TS + AntD + Pro + Umi + AntV），承担编码/详细设计/单测文档；内置组件版本安全红线（禁止越权自行实现不存在版本的组件）与组件→技能→SDK 包速查表 |

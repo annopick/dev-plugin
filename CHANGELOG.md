@@ -5,6 +5,21 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.8.0] - 2026-09-16
+
+新增 WeKnora Wiki 提示词生成技能（沉淀自另一项目的实战技能），并完成 Codex 发行版同步。按 SemVer 升 minor。
+
+### 新增
+
+- **技能 `skills/weknora-wiki-prompts`**（同步至 `plugins/annopick-plugin/skills/`）：为 WeKnora 知识库生成或校准 Wiki 的两段业务指令——「Wiki 提取重点」（`ExtractionInstructions`，控制实体/概念抽取）与「Wiki 内容生成要求」（`ContentInstructions`，控制摘要页/实体概念页/首页三处表达）。核心原则：只写领域侧重，不重述系统协议；单段 ≤ 4000 字符，结尾保留兼容声明。
+- **四步流程**：通读语料建立领域清单（实体/概念/别名/版本事实，逐条可指回来源）→ 起草提取重点（分层实体清单 + 防碎片化粒度规则）→ 起草内容生成要求（摘要/页面/首页/通用四段固定骨架）→ 逐段校验并在语料目录写入两个提示词文件、报告字符数。
+- **成对样例校准文件**（`references/example-agent-framework.md`）：由真实语料《智能体应用开发框架》4.0.1.RELEASE（17 份 PDF）生成的成对样例（内容生成要求 1644 字符、提取重点 1921 字符），用于校准口吻、结构与颗粒度。
+- **Codex 兼容**：技能满足 Codex Agent Skills 格式（frontmatter 仅 `name` + `description`，name 与目录一致，正文无宿主专属依赖）；已同步至 `plugins/annopick-plugin/skills/`，由 `.codex-plugin/plugin.json` 的 `skills: ./skills/` 自动发现，市场清单无需改动。
+
+### 变更
+
+- **README**：简介、目录结构、组件清单三处登记新技能。
+
 ## [1.7.0] - 2026-09-15
 
 新增阿里云云效（Yunxiao）CLI 技能，基于 `aliyun devops` 子命令全集（API 2026-05-25）编制并经带/不带技能对照测试验证。按 SemVer 升 minor。
